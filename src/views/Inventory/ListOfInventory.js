@@ -9,7 +9,7 @@ import { GET_RAW_MATERIALS } from "./hocs";
 
 import ReactTable from "components/ReactTable/ReactTable.js";
 import { ChangeQuantityModal, RawMaterialModal } from "./Modals";
-import { SweetSuccess } from "./Modals";
+import { SpinnerLinear } from "components/SpinnerLinear";
 const RawMaterialButtons = (
   handleQuantityModal,
   handleRawMaterialModal,
@@ -78,7 +78,7 @@ export const ListOfInventory = () => {
     setShowRawMaterialModal(!showRawMaterialModal);
   };
 
-  if (loading) return <p>Cargado...</p>;
+  if (loading) return <SpinnerLinear />;
   if (error) return <p>Error :(</p>;
   const content = data.rawMaterials.map((el) => {
     return {
