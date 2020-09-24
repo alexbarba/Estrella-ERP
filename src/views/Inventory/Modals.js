@@ -16,12 +16,14 @@ import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
-
+import SweetAlert from "react-bootstrap-sweetalert";
+import sweetAlertStyle from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 //DB ACCESS
 import { UPDATE_RAW_MATERIAL } from "./hocs";
 import { useMutation } from "@apollo/client";
 
 const useStyles = makeStyles(styles);
+const useSweetAlertStyle = makeStyles(sweetAlertStyle);
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
@@ -60,11 +62,14 @@ export const ChangeQuantityModal = ({ props }) => {
   const { modal, setModal, input, rawMaterial } = props;
   const [quantity, setQuantity] = useState(1);
   const [updateRawMaterial] = useMutation(UPDATE_RAW_MATERIAL);
+  const [successAlert, setSuccessAlert] = useState(false);
 
   const title = input
     ? `Metiendo ${rawMaterial.name}`
     : `Sacando ${rawMaterial.name}`;
-
+  const successMessage = input
+    ? `Has metido ${quantity + " " + rawMaterial.name}`
+    : `Has sacado ${quantity + " " + rawMaterial.name}`;
   const updatedQuantity = input
     ? Number(quantity) + Number(rawMaterial.quantity)
     : Number(rawMaterial.quantity) - Number(quantity);
@@ -97,11 +102,21 @@ export const ChangeQuantityModal = ({ props }) => {
         },
       },
     });
+    setSuccessAlert(true);
     closeModal();
   };
 
   return (
     <div>
+      {successAlert && (
+        <SweetSuccess
+          props={{
+            modal: successAlert,
+            setModal: (v) => setSuccessAlert(v),
+            msg: successMessage,
+          }}
+        />
+      )}
       <Dialog
         classes={{
           root: classes.center,
@@ -167,3 +182,22 @@ export const ChangeQuantityModal = ({ props }) => {
 };
 
 export const RawMaterialModal = () => <div></div>;
+
+export const SweetSuccess = ({ props }) => {
+  const { modal, setModal, msg } = props;
+  const classes = useSweetAlertStyle();
+
+  return (
+    modal && (
+      <SweetAlert
+        success
+        style={{ display: "block", marginTop: "-100px" }}
+        title="Operación satisfactoria!"
+        onConfirm={() => setModal(false)}
+        onCancel={() => setModal(false)}
+        confirmBtnCssClass={classes.button + " " + classes.success}>
+        {msg}
+      </SweetAlert>
+    )
+  );
+};
