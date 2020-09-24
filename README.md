@@ -1,4 +1,4 @@
-# ERP Estrella
+# Estrella ERP
 
 Módulo de Inventarios en desarrollo
 
