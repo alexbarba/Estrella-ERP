@@ -1,33 +1,24 @@
 import React, { useState } from "react";
 // material-ui components
 import { makeStyles } from "@material-ui/core/styles";
-import Slide from "@material-ui/core/Slide";
-import Dialog from "@material-ui/core/Dialog";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogActions from "@material-ui/core/DialogActions";
-// @material-ui/icons
-import Close from "@material-ui/icons/Close";
 // core components
 import Button from "components/CustomButtons/Button.js";
 import CustomInput from "components/CustomInput/CustomInput.js";
-import styles from "assets/jss/material-dashboard-pro-react/modalStyle.js";
 import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
-import SweetAlert from "react-bootstrap-sweetalert";
-import sweetAlertStyle from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
+import Card from "components/Card/Card.js";
+import CardHeader from "components/Card/CardHeader.js";
+import CardIcon from "components/Card/CardIcon.js";
+import CardBody from "components/Card/CardBody.js";
+import { Modal, SweetSuccess } from "components/Modal";
+
+import EventNoteIcon from "@material-ui/icons/EventNote";
+import formStyle from "assets/jss/material-dashboard-pro-react/views/regularFormsStyle";
 //DB ACCESS
 import { UPDATE_RAW_MATERIAL } from "./hocs";
 import { useMutation } from "@apollo/client";
-
-const useStyles = makeStyles(styles);
-const useSweetAlertStyle = makeStyles(sweetAlertStyle);
-
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="down" ref={ref} {...props} />;
-});
 
 const Buttons = ({ children, props }) => {
   const { incrementOne } = props;
@@ -74,8 +65,6 @@ export const ChangeQuantityModal = ({ props }) => {
     ? Number(quantity) + Number(rawMaterial.quantity)
     : Number(rawMaterial.quantity) - Number(quantity);
 
-  const classes = useStyles();
-
   const incrementOne = (increment) => {
     if (increment) {
       setQuantity(Number(quantity) + 1);
@@ -86,8 +75,8 @@ export const ChangeQuantityModal = ({ props }) => {
     }
   };
 
-  const closeModal = () => {
-    setModal();
+  const closeModal = (successMessage) => {
+    setModal(successMessage);
     setTimeout(() => {
       setQuantity(1);
     }, 2000);
@@ -103,7 +92,7 @@ export const ChangeQuantityModal = ({ props }) => {
       },
     });
     setSuccessAlert(true);
-    closeModal();
+    closeModal(successMessage);
   };
 
   return (
@@ -117,87 +106,98 @@ export const ChangeQuantityModal = ({ props }) => {
           }}
         />
       )}
-      <Dialog
-        classes={{
-          root: classes.center,
-          paper: classes.modal,
-        }}
-        open={modal}
-        transition={Transition}
-        keepMounted
-        onClose={() => closeModal()}
-        aria-labelledby="modal-slide-title"
-        aria-describedby="modal-slide-description">
-        <DialogTitle
-          id="classic-modal-slide-title"
-          disableTypography
-          className={classes.modalHeader}>
-          <Button
-            justIcon
-            className={classes.modalCloseButton}
-            key="close"
-            aria-label="Close"
-            color="transparent"
-            onClick={() => closeModal()}>
-            <Close className={classes.modalClose} />
-          </Button>
-          <h4 className={classes.modalTitle}>{title}</h4>
-        </DialogTitle>
-        <DialogContent
-          id="modal-slide-description"
-          className={classes.modalBody}>
-          <Buttons
-            props={{
-              incrementOne: (value) => incrementOne(value),
-              updatedQuantity: updatedQuantity,
-            }}>
-            <CustomInput
-              inputProps={{
-                placeholder: "Cantidad",
-                autoFocus: true,
-                value: quantity,
-                type: "type",
-                onChange: (e) => {
-                  setQuantity(e.target.value);
-                },
-              }}
-              id="quantity"
-              formControlProps={{
-                fullWidth: false,
-              }}
-            />
-          </Buttons>
-          <p>Existencia posterior: {updatedQuantity}</p>
-        </DialogContent>
-        <DialogActions
-          className={classes.modalFooter + " " + classes.modalFooterCenter}>
-          <Button onClick={() => closeModal()}>Cancelar</Button>
-          <Button onClick={() => submitQuantity()} color="success">
-            Guardar
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <Modal
+        props={{
+          title: title,
+          modal: modal,
+          closeModal: closeModal,
+          submit: () => submitQuantity(),
+        }}>
+        <Buttons
+          props={{
+            incrementOne: (value) => incrementOne(value),
+            updatedQuantity: updatedQuantity,
+          }}>
+          <CustomInput
+            inputProps={{
+              placeholder: "Cantidad",
+              autoFocus: true,
+              value: quantity,
+              onChange: (e) => {
+                setQuantity(e.target.value);
+              },
+            }}
+            id="quantity"
+            formControlProps={{
+              fullWidth: false,
+            }}
+          />
+        </Buttons>
+        <p>Existencia posterior: {updatedQuantity}</p>
+      </Modal>
     </div>
   );
 };
 
-export const RawMaterialModal = () => <div></div>;
-
-export const SweetSuccess = ({ props }) => {
-  const { modal, setModal, msg } = props;
-  const classes = useSweetAlertStyle();
+export const RawMaterialModal = ({ props }) => {
+  const classes = makeStyles(formStyle);
+  const { modal, setModal, rawMaterial } = props;
+  const initialState = {
+    _id: "",
+    name: "",
+    quantity: 0,
+    cost: 0,
+    uom: {},
+    provider: {},
+  };
+  const [newRawMaterial, setNewRawMaterial] = useState({ ...rawMaterial });
+  const closeModal = () => {
+    setModal();
+    setNewRawMaterial(initialState);
+  };
 
   return (
-    modal && (
-      <SweetAlert
-        success
-        style={{ display: "block", marginTop: "-100px" }}
-        title="Operación satisfactoria!"
-        onConfirm={() => setModal(false)}
-        onCancel={() => setModal(false)}
-        confirmBtnCssClass={classes.button + " " + classes.success}>
-        {msg}
-      </SweetAlert>
-    )
+    <Modal
+      props={{
+        title: "Materia Prima",
+        modal: modal,
+        closeModal: () => closeModal(),
+        submit: () => {},
+      }}>
+      <GridContainer>
+        <GridItem xs={12} sm={12} md={6}>
+          <Card>
+            <CardHeader color="rose" icon>
+              <CardIcon color="rose">
+                <EventNoteIcon />
+              </CardIcon>
+              <h4 className={classes.cardIconTitle}>Materia Prima</h4>
+            </CardHeader>
+            <CardBody>
+              <form>
+                <CustomInput
+                  labelText="Nombre"
+                  id="name"
+                  name="name"
+                  formControlProps={{
+                    fullWidth: true,
+                  }}
+                  inputProps={{
+                    name: "name",
+                    value: newRawMaterial.name,
+                    onChange: (e) =>
+                      setNewRawMaterial({
+                        ...newRawMaterial,
+                        [e.target.name]: e.target.value,
+                      }),
+                  }}
+                />
+                <Button color="rose">Submit</Button>
+              </form>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
+    </Modal>
   );
 };

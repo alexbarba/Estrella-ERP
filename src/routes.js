@@ -16,7 +16,6 @@ var dashRoutes = [
   {
     path: "/error-page",
     name: "Error Page",
-    rtlName: "صفحة الخطأ",
     mini: "E",
     component: ErrorPage,
     layout: "/auth",

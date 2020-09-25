@@ -8,13 +8,11 @@ import { useQuery } from "@apollo/client";
 import { GET_RAW_MATERIALS } from "./hocs";
 
 import ReactTable from "components/ReactTable/ReactTable.js";
+import { SweetSuccess } from "components/Modal";
 import { ChangeQuantityModal, RawMaterialModal } from "./Modals";
 import { SpinnerLinear } from "components/SpinnerLinear";
-const RawMaterialButtons = (
-  handleQuantityModal,
-  handleRawMaterialModal,
-  setRawMaterialName
-) => {
+
+const RawMaterialButtons = (rawMaterialModalActions) => {
   return (
     <div className="actions-right">
       <Button
@@ -23,10 +21,7 @@ const RawMaterialButtons = (
         simple
         color="info"
         className="like"
-        onClick={(rawMaterialName) => {
-          handleQuantityModal(true);
-          setRawMaterialName(rawMaterialName);
-        }}>
+        onClick={() => rawMaterialModalActions(0)}>
         <AddIcon />
       </Button>
 
@@ -36,7 +31,9 @@ const RawMaterialButtons = (
         simple
         color="warning"
         className="edit"
-        onClick={() => handleRawMaterialModal()}>
+        onClick={(rawMaterialName) =>
+          rawMaterialModalActions(1, rawMaterialName)
+        }>
         <Edit />
       </Button>
 
@@ -46,10 +43,9 @@ const RawMaterialButtons = (
         simple
         color="danger"
         className="remove"
-        onClick={(rawMaterialName) => {
-          handleQuantityModal(false);
-          setRawMaterialName(rawMaterialName);
-        }}>
+        onClick={(rawMaterialName) =>
+          rawMaterialModalActions(2, rawMaterialName)
+        }>
         <RemoveIcon />
       </Button>
     </div>
@@ -58,24 +54,44 @@ const RawMaterialButtons = (
 
 export const ListOfInventory = () => {
   const { loading, error, data } = useQuery(GET_RAW_MATERIALS);
-  //Estado para mostrar el modal de cambiar cantidad de material
+  // Estado para mostrar el modal de cambiar cantidad de material
   const [showQuantityModal, setShowQuantityModal] = useState(false);
-  //Este estado es para saber si estamos metiendo o sacando material
+  // Estado para saber si estamos metiendo o sacando material
   const [inputRawMaterial, setInputRawMaterial] = useState(true);
-  //Estado para mostrar el modal donde se editan las propiedades de alguna materia prima
+  // Estado para mostrar el modal donde se editan las propiedades de alguna materia prima
   const [showRawMaterialModal, setShowRawMaterialModal] = useState(false);
+  // Estado para saber que materia prima ha sido seleccionada para ser modificada
   const [activeRawMaterial, setActiveRawMaterial] = useState({});
+  // Estado para mostrar el modal de operacion exitosa
+  const [successModal, setSuccessModal] = useState();
 
-  const handleQuantityModal = (input) => {
-    setShowQuantityModal(!showQuantityModal);
-    if (!(input === undefined)) {
-      console.log(input);
-      setInputRawMaterial(input);
+  const rawMaterialModalActions = (rawMaterial, num) => {
+    setActiveRawMaterial(rawMaterial);
+    if (num === 0) {
+      setShowQuantityModal(true);
+      setInputRawMaterial(true);
+    } else if (num === 1) {
+      setShowRawMaterialModal(true);
+    } else if (num === 2) {
+      setShowQuantityModal(true);
+      setInputRawMaterial(false);
+    } else {
+      setShowQuantityModal(false);
+      setInputRawMaterial(false);
+      setShowRawMaterialModal(false);
     }
   };
 
-  const handleRawMaterialModal = () => {
-    setShowRawMaterialModal(!showRawMaterialModal);
+  const setModal = (modalNum, submitMsg) => {
+    if (modalNum === 0) {
+      setShowQuantityModal(false);
+      setActiveRawMaterial({});
+    } else if (modalNum === 1) {
+      setShowRawMaterialModal(false);
+      setActiveRawMaterial({});
+    }
+
+    setSuccessModal(submitMsg);
   };
 
   if (loading) return <SpinnerLinear />;
@@ -88,28 +104,42 @@ export const ListOfInventory = () => {
       cost: el.cost,
       uom: el.uom?.name,
       provider: el.provider?.name,
-      actions: RawMaterialButtons(
-        (input) => handleQuantityModal(input),
-        () => handleRawMaterialModal(),
-        () => setActiveRawMaterial(el)
-      ),
+      actions: RawMaterialButtons((num) => rawMaterialModalActions(el, num)),
     };
   });
 
   return (
     <>
-      <ChangeQuantityModal
-        props={{
-          modal: showQuantityModal,
-          setModal: () => handleQuantityModal(),
-          input: inputRawMaterial,
-          rawMaterial: activeRawMaterial,
-        }}
-      />
-      <RawMaterialModal
-        modal={showQuantityModal}
-        setModal={() => handleRawMaterialModal()}
-      />
+      {showQuantityModal && (
+        <ChangeQuantityModal
+          props={{
+            modal: showQuantityModal,
+            setModal: (submitMsg) => setModal(0, submitMsg),
+            input: inputRawMaterial,
+            rawMaterial: activeRawMaterial,
+          }}
+        />
+      )}
+
+      {showRawMaterialModal && (
+        <RawMaterialModal
+          props={{
+            modal: showRawMaterialModal,
+            setModal: (submitMsg) => setModal(1, submitMsg),
+            rawMaterial: activeRawMaterial,
+          }}
+        />
+      )}
+
+      {successModal && (
+        <SweetSuccess
+          props={{
+            modal: successModal,
+            setModal: () => setSuccessModal(),
+            msg: successModal,
+          }}
+        />
+      )}
       <ReactTable
         columns={[
           {
