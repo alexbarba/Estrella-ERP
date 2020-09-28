@@ -161,7 +161,7 @@ export const RawMaterialModal = ({ props }) => {
   const [newRawMaterial, setNewRawMaterial] = useState(initialState);
   const [updated, setUpdated] = useState(rawMaterial ? ["_id"] : []);
   const updating = (newVariable) => {
-    setNewRawMaterial({ ...rawMaterial, ...newVariable });
+    setNewRawMaterial({ ...newRawMaterial, ...newVariable });
     if (!updated.includes(...Object.keys(newVariable)))
       setUpdated([...updated, ...Object.keys(newVariable)]);
   };
