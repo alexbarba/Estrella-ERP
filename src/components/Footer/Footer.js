@@ -18,16 +18,16 @@ export default function Footer(props) {
   var container = cx({
     [classes.container]: !fluid,
     [classes.containerFluid]: fluid,
-    [classes.whiteColor]: white
+    [classes.whiteColor]: white,
   });
   var anchor =
     classes.a +
     cx({
-      [" " + classes.whiteColor]: white
+      [" " + classes.whiteColor]: white,
     });
   var block = cx({
     [classes.block]: true,
-    [classes.whiteColor]: white
+    [classes.whiteColor]: white,
   });
   return (
     <footer className={classes.footer}>
@@ -58,12 +58,8 @@ export default function Footer(props) {
         </div>
         <p className={classes.right}>
           &copy; {1900 + new Date().getYear()}{" "}
-          <a
-            href="https://www.creative-tim.com?ref=mdpr-footer"
-            className={anchor}
-            target="_blank"
-          >
-            {rtlActive ? "توقيت الإبداعية" : "Creative Tim"}
+          <a href="#" className={anchor} target="_blank">
+            {rtlActive ? "توقيت الإبداعية" : "Estrella ERP"}
           </a>
           {rtlActive
             ? ", مصنوعة مع الحب لشبكة الإنترنت أفضل"
@@ -77,5 +73,5 @@ export default function Footer(props) {
 Footer.propTypes = {
   fluid: PropTypes.bool,
   white: PropTypes.bool,
-  rtlActive: PropTypes.bool
+  rtlActive: PropTypes.bool,
 };
