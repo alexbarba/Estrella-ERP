@@ -148,41 +148,49 @@ export const RawMaterialModal = ({ props }) => {
   const classes = makeStyles(formStyle);
   const { modal, setModal, rawMaterial } = props;
 
-  const initialState = rawMaterial
-    ? rawMaterial
-    : {
-        name: "",
-        quantity: 0,
-        cost: 0,
-        uom: "",
-        provider: "",
-      };
+  const initialState = {
+    name: rawMaterial?.name ? rawMaterial.name : "",
+    quantity: rawMaterial?.quantity ? rawMaterial.quantity : 0,
+    cost: rawMaterial?.cost ? rawMaterial.cost : 0,
+    uom: {
+      _id: rawMaterial?.uom?._id ? rawMaterial.uom._id : "",
+      name: rawMaterial?.uom?.name ? rawMaterial.uom.name : "",
+    },
+    provider: {
+      _id: rawMaterial?.provider?._id ? rawMaterial.provider._id : "",
+      name: rawMaterial?.provider?.name ? rawMaterial.provider.name : "",
+    },
+  };
 
   const [newRawMaterial, setNewRawMaterial] = useState(initialState);
-  const [updated, setUpdated] = useState(rawMaterial ? ["_id"] : []);
+  const [updated, setUpdated] = useState([]);
   const updating = (newVariable) => {
     setNewRawMaterial({ ...newRawMaterial, ...newVariable });
     if (!updated.includes(...Object.keys(newVariable)))
       setUpdated([...updated, ...Object.keys(newVariable)]);
   };
-  const mutation = newRawMaterial._id
-    ? UPDATE_RAW_MATERIAL
-    : CREATE_RAW_MATERIAL;
+
+  const mutation = rawMaterial._id ? UPDATE_RAW_MATERIAL : CREATE_RAW_MATERIAL;
+
   const [saveRawMaterial] = useMutation(mutation);
-  console.log(newRawMaterial);
   const submitModal = () => {
-    console.log(updated);
-    const input = Object.assign(
+    let input = Object.assign(
       {},
       ...updated.map((key) => {
+        if (key === "cost") {
+          return { [key]: Number(newRawMaterial[key]) };
+        } else if (key === "uom" || key === "provider") {
+          return { [key]: newRawMaterial[key]._id };
+        }
         return { [key]: newRawMaterial[key] };
       })
     );
-    console.log(input);
-    console.log(newRawMaterial);
+    if (rawMaterial?._id) {
+      input._id = rawMaterial._id;
+    }
     saveRawMaterial({
       variables: {
-        input: { ...input },
+        input: input,
       },
     });
     setModal("Los cambios se han guardado.");
@@ -248,7 +256,7 @@ export const RawMaterialModal = ({ props }) => {
                         name: "cost",
                         value: newRawMaterial.cost,
                         onChange: (e) =>
-                          updating({ [e.target.name]: Number(e.target.value) }),
+                          updating({ [e.target.name]: e.target.value }),
                       }}
                     />
                   </GridItem>
