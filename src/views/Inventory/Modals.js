@@ -13,28 +13,23 @@ import CardHeader from "components/Card/CardHeader.js";
 import CardIcon from "components/Card/CardIcon.js";
 import CardBody from "components/Card/CardBody.js";
 import { Modal, SweetSuccess } from "components/Modal";
+import { CustomSelect } from "components/CustomSelect";
 
 import EventNoteIcon from "@material-ui/icons/EventNote";
 import formStyle from "assets/jss/material-dashboard-pro-react/views/regularFormsStyle";
 //DB ACCESS
-import { UPDATE_RAW_MATERIAL } from "./hocs";
-import { useMutation } from "@apollo/client";
+import {
+  UPDATE_RAW_MATERIAL,
+  GET_NAME_PROVIDERS,
+  GET_NAME_UOMS,
+  CREATE_RAW_MATERIAL,
+} from "./hocs";
+import { useMutation, useLazyQuery } from "@apollo/client";
 
 const Buttons = ({ children, props }) => {
   const { incrementOne } = props;
   return (
     <GridContainer alignItems="center" justify="center">
-      <GridItem>
-        <Button
-          round
-          justIcon
-          size="sm"
-          color="primary"
-          onClick={() => incrementOne(true)}>
-          <AddIcon />
-        </Button>
-      </GridItem>
-      <GridItem xs={2}>{children}</GridItem>
       <GridItem>
         <Button
           justIcon
@@ -43,6 +38,17 @@ const Buttons = ({ children, props }) => {
           color="primary"
           onClick={() => incrementOne(false)}>
           <RemoveIcon />
+        </Button>
+      </GridItem>
+      <GridItem xs={2}>{children}</GridItem>
+      <GridItem>
+        <Button
+          round
+          justIcon
+          size="sm"
+          color="primary"
+          onClick={() => incrementOne(true)}>
+          <AddIcon />
         </Button>
       </GridItem>
     </GridContainer>
@@ -56,14 +62,14 @@ export const ChangeQuantityModal = ({ props }) => {
   const [successAlert, setSuccessAlert] = useState(false);
 
   const title = input
-    ? `Metiendo ${rawMaterial.name}`
-    : `Sacando ${rawMaterial.name}`;
+    ? `Metiendo ${rawMaterial?.name}`
+    : `Sacando ${rawMaterial?.name}`;
   const successMessage = input
-    ? `Has metido ${quantity + " " + rawMaterial.name}`
-    : `Has sacado ${quantity + " " + rawMaterial.name}`;
+    ? `Has introducido ${quantity + " " + rawMaterial?.name}`
+    : `Has sacado ${quantity + " " + rawMaterial?.name}`;
   const updatedQuantity = input
-    ? Number(quantity) + Number(rawMaterial.quantity)
-    : Number(rawMaterial.quantity) - Number(quantity);
+    ? Number(quantity) + Number(rawMaterial?.quantity)
+    : Number(rawMaterial?.quantity) - Number(quantity);
 
   const incrementOne = (increment) => {
     if (increment) {
@@ -91,7 +97,6 @@ export const ChangeQuantityModal = ({ props }) => {
         },
       },
     });
-    setSuccessAlert(true);
     closeModal(successMessage);
   };
 
@@ -142,30 +147,56 @@ export const ChangeQuantityModal = ({ props }) => {
 export const RawMaterialModal = ({ props }) => {
   const classes = makeStyles(formStyle);
   const { modal, setModal, rawMaterial } = props;
-  const initialState = {
-    _id: "",
-    name: "",
-    quantity: 0,
-    cost: 0,
-    uom: {},
-    provider: {},
-  };
-  const [newRawMaterial, setNewRawMaterial] = useState({ ...rawMaterial });
-  const closeModal = () => {
-    setModal();
-    setNewRawMaterial(initialState);
-  };
 
+  const initialState = rawMaterial
+    ? rawMaterial
+    : {
+        name: "",
+        quantity: 0,
+        cost: 0,
+        uom: "",
+        provider: "",
+      };
+
+  const [newRawMaterial, setNewRawMaterial] = useState(initialState);
+  const [updated, setUpdated] = useState(rawMaterial ? ["_id"] : []);
+  const updating = (newVariable) => {
+    setNewRawMaterial({ ...rawMaterial, ...newVariable });
+    if (!updated.includes(...Object.keys(newVariable)))
+      setUpdated([...updated, ...Object.keys(newVariable)]);
+  };
+  const mutation = newRawMaterial._id
+    ? UPDATE_RAW_MATERIAL
+    : CREATE_RAW_MATERIAL;
+  const [saveRawMaterial] = useMutation(mutation);
+  console.log(newRawMaterial);
+  const submitModal = () => {
+    console.log(updated);
+    const input = Object.assign(
+      {},
+      ...updated.map((key) => {
+        return { [key]: newRawMaterial[key] };
+      })
+    );
+    console.log(input);
+    console.log(newRawMaterial);
+    saveRawMaterial({
+      variables: {
+        input: { ...input },
+      },
+    });
+    setModal("Los cambios se han guardado.");
+  };
   return (
     <Modal
       props={{
         title: "Materia Prima",
         modal: modal,
-        closeModal: () => closeModal(),
-        submit: () => {},
+        closeModal: () => setModal(),
+        submit: () => submitModal(),
       }}>
       <GridContainer>
-        <GridItem xs={12} sm={12} md={6}>
+        <GridItem xs={12} sm={12} md={12}>
           <Card>
             <CardHeader color="rose" icon>
               <CardIcon color="rose">
@@ -175,29 +206,112 @@ export const RawMaterialModal = ({ props }) => {
             </CardHeader>
             <CardBody>
               <form>
-                <CustomInput
-                  labelText="Nombre"
-                  id="name"
-                  name="name"
-                  formControlProps={{
-                    fullWidth: true,
-                  }}
-                  inputProps={{
-                    name: "name",
-                    value: newRawMaterial.name,
-                    onChange: (e) =>
-                      setNewRawMaterial({
-                        ...newRawMaterial,
-                        [e.target.name]: e.target.value,
-                      }),
-                  }}
-                />
-                <Button color="rose">Submit</Button>
+                <GridContainer>
+                  <GridItem xs={12} sm={12} md={6}>
+                    <CustomInput
+                      labelText="Nombre"
+                      id="name"
+                      formControlProps={{
+                        fullWidth: true,
+                      }}
+                      inputProps={{
+                        name: "name",
+                        value: newRawMaterial.name,
+                        onChange: (e) =>
+                          updating({ [e.target.name]: e.target.value }),
+                      }}
+                    />
+                  </GridItem>
+                  <GridItem xs={12} sm={12} md={6}>
+                    <CustomInput
+                      labelText="Cantidad"
+                      id="quantity"
+                      formControlProps={{
+                        fullWidth: false,
+                      }}
+                      inputProps={{
+                        name: "quantity",
+                        value: newRawMaterial.quantity,
+                        onChange: (e) =>
+                          updating({ [e.target.name]: Number(e.target.value) }),
+                      }}
+                    />
+                  </GridItem>
+                  <GridItem xs={12} sm={12} md={6}>
+                    <CustomInput
+                      labelText="Costo"
+                      id="cost"
+                      formControlProps={{
+                        fullWidth: true,
+                      }}
+                      inputProps={{
+                        name: "cost",
+                        value: newRawMaterial.cost,
+                        onChange: (e) =>
+                          updating({ [e.target.name]: Number(e.target.value) }),
+                      }}
+                    />
+                  </GridItem>
+                  <GridItem xs={12} sm={12} md={6}>
+                    <LazyProviders
+                      props={{
+                        selected: newRawMaterial.provider,
+                        onChange: (_id) =>
+                          updating({
+                            provider: { _id: _id },
+                          }),
+                      }}
+                    />
+                  </GridItem>
+                  <GridItem xs={12} sm={12} md={6}>
+                    <LazyUOMs
+                      props={{
+                        selected: newRawMaterial.uom,
+                        onChange: (_id) =>
+                          updating({
+                            uom: { _id: _id },
+                          }),
+                      }}
+                    />
+                  </GridItem>
+                </GridContainer>
               </form>
             </CardBody>
           </Card>
         </GridItem>
       </GridContainer>
     </Modal>
+  );
+};
+
+const LazyProviders = ({ props }) => {
+  const [getProviders, { data }] = useLazyQuery(GET_NAME_PROVIDERS);
+  const { selected, onChange } = props;
+  return (
+    <CustomSelect
+      props={{
+        name: "Proveedor",
+        onOpen: () => getProviders(),
+        onChange: (_id) => onChange(_id),
+        options: data ? data.providers : undefined,
+        defaultSelected: selected,
+      }}
+    />
+  );
+};
+
+const LazyUOMs = ({ props }) => {
+  const [getUOMs, { data }] = useLazyQuery(GET_NAME_UOMS);
+  const { selected, onChange } = props;
+  return (
+    <CustomSelect
+      props={{
+        name: "Presentación",
+        onOpen: () => getUOMs(),
+        onChange: (_id) => onChange(_id),
+        options: data ? data.uoms : undefined,
+        defaultSelected: selected,
+      }}
+    />
   );
 };

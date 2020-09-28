@@ -11,6 +11,8 @@ import ReactTable from "components/ReactTable/ReactTable.js";
 import { SweetSuccess } from "components/Modal";
 import { ChangeQuantityModal, RawMaterialModal } from "./Modals";
 import { SpinnerLinear } from "components/SpinnerLinear";
+import GridContainer from "components/Grid/GridContainer.js";
+import GridItem from "components/Grid/GridItem.js";
 
 const RawMaterialButtons = (rawMaterialModalActions) => {
   return (
@@ -61,7 +63,7 @@ export const ListOfInventory = () => {
   // Estado para mostrar el modal donde se editan las propiedades de alguna materia prima
   const [showRawMaterialModal, setShowRawMaterialModal] = useState(false);
   // Estado para saber que materia prima ha sido seleccionada para ser modificada
-  const [activeRawMaterial, setActiveRawMaterial] = useState({});
+  const [activeRawMaterial, setActiveRawMaterial] = useState();
   // Estado para mostrar el modal de operacion exitosa
   const [successModal, setSuccessModal] = useState();
 
@@ -88,7 +90,7 @@ export const ListOfInventory = () => {
       setActiveRawMaterial({});
     } else if (modalNum === 1) {
       setShowRawMaterialModal(false);
-      setActiveRawMaterial({});
+      setActiveRawMaterial(undefined);
     }
 
     setSuccessModal(submitMsg);
@@ -110,16 +112,14 @@ export const ListOfInventory = () => {
 
   return (
     <>
-      {showQuantityModal && (
-        <ChangeQuantityModal
-          props={{
-            modal: showQuantityModal,
-            setModal: (submitMsg) => setModal(0, submitMsg),
-            input: inputRawMaterial,
-            rawMaterial: activeRawMaterial,
-          }}
-        />
-      )}
+      <ChangeQuantityModal
+        props={{
+          modal: showQuantityModal,
+          setModal: (submitMsg) => setModal(0, submitMsg),
+          input: inputRawMaterial,
+          rawMaterial: activeRawMaterial,
+        }}
+      />
 
       {showRawMaterialModal && (
         <RawMaterialModal
@@ -140,10 +140,24 @@ export const ListOfInventory = () => {
           }}
         />
       )}
+      <GridContainer
+        justify="flex-end"
+        alignItems="flex-start"
+        style={{ marginTop: 10, marginRight: 10, marginBottom: 10 }}>
+        <GridItem>
+          <Button
+            round
+            color="primary"
+            onClick={() => setShowRawMaterialModal(true)}>
+            <AddIcon />
+            Crear nuevo
+          </Button>
+        </GridItem>
+      </GridContainer>
       <ReactTable
         columns={[
           {
-            Header: "Producto",
+            Header: "Nombre",
             accessor: "name",
           },
           {

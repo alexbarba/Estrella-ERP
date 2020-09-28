@@ -58,7 +58,7 @@ export const Modal = ({ props, children }) => {
         className={classes.modalFooter + " " + classes.modalFooterCenter}>
         <Button onClick={() => closeModal()}>Cancelar</Button>
         <Button onClick={() => submit()} color="success">
-          Aceptar
+          Guardar
         </Button>
       </DialogActions>
     </Dialog>

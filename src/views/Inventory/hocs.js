@@ -9,9 +9,11 @@ export const GET_RAW_MATERIALS = gql`
       quantity
       cost
       uom {
+        _id
         name
       }
       provider {
+        _id
         name
       }
     }
@@ -38,6 +40,18 @@ export const GET_PROVIDERS = gql`
   }
 `;
 
+export const GET_NAME_PROVIDERS = gql`
+  {
+    providers {
+      name
+      _id
+      phone
+      email
+      address
+    }
+  }
+`;
+
 //export const GET_PROVIDER = gql``;
 
 export const GET_UOMS = gql`
@@ -46,6 +60,15 @@ export const GET_UOMS = gql`
       _id
       name
       description
+    }
+  }
+`;
+
+export const GET_NAME_UOMS = gql`
+  {
+    uoms {
+      _id
+      name
     }
   }
 `;
