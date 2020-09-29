@@ -9,7 +9,7 @@ import { GET_RAW_MATERIALS } from "./hocs";
 
 import ReactTable from "components/ReactTable/ReactTable.js";
 import { SweetSuccess } from "components/Modal";
-import { ChangeQuantityModal, RawMaterialModal } from "./Modals";
+import { ChangeQuantityModal, RawMaterialModal } from "./RawMaterialModals";
 import { SpinnerLinear } from "components/SpinnerLinear";
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
@@ -54,7 +54,7 @@ const RawMaterialButtons = (rawMaterialModalActions) => {
   );
 };
 
-export const ListOfRawMaterial = () => {
+export const RawMaterialTable = () => {
   const { loading, error, data } = useQuery(GET_RAW_MATERIALS);
   // Estado para mostrar el modal de cambiar cantidad de material
   const [showQuantityModal, setShowQuantityModal] = useState(false);

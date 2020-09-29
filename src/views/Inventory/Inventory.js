@@ -17,7 +17,7 @@ import CardIcon from "components/Card/CardIcon.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CustomTabs from "components/CustomTabs/CustomTabs";
 
-import { ListOfRawMaterial } from "./ListOfRawMaterial";
+import { RawMaterialTable } from "./RawMaterialTable";
 import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 
 const styles = {
@@ -36,7 +36,7 @@ export default function ReactTables() {
     {
       tabName: "Materia Prima",
       tabIcon: Store,
-      tabContent: <ListOfRawMaterial />,
+      tabContent: <RawMaterialTable />,
     },
     {
       tabName: "Proveedores",

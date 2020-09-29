@@ -35,23 +35,23 @@ export default function Footer(props) {
         <div className={classes.left}>
           <List className={classes.list}>
             <ListItem className={classes.inlineBlock}>
-              <a href="#home" className={block}>
-                {rtlActive ? "الصفحة الرئيسية" : "Home"}
+              <a href="/" className={block}>
+                Home
               </a>
             </ListItem>
             <ListItem className={classes.inlineBlock}>
               <a href="#company" className={block}>
-                {rtlActive ? "شركة" : "Company"}
+                Nosotros
               </a>
             </ListItem>
             <ListItem className={classes.inlineBlock}>
-              <a href="#portfolio" className={block}>
-                {rtlActive ? "بعدسة" : "Portfolio"}
+              <a href="#clients" className={block}>
+                Clientes satisfechos
               </a>
             </ListItem>
             <ListItem className={classes.inlineBlock}>
               <a href="#blog" className={block}>
-                {rtlActive ? "مدونة" : "Blog"}
+                Sitio web
               </a>
             </ListItem>
           </List>
@@ -59,11 +59,9 @@ export default function Footer(props) {
         <p className={classes.right}>
           &copy; {1900 + new Date().getYear()}{" "}
           <a href="#" className={anchor} target="_blank">
-            {rtlActive ? "توقيت الإبداعية" : "Estrella ERP"}
+            Estrella ERP
           </a>
-          {rtlActive
-            ? ", مصنوعة مع الحب لشبكة الإنترنت أفضل"
-            : ", made with love for a better web"}
+          , El auténtico sabor del pan
         </p>
       </div>
     </footer>
