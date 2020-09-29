@@ -170,7 +170,11 @@ export const RawMaterialModal = ({ props }) => {
       setUpdated([...updated, ...Object.keys(newVariable)]);
   };
 
+<<<<<<< HEAD:src/views/Inventory/RawMaterialModals.js
   const mutation = rawMaterial ? UPDATE_RAW_MATERIAL : CREATE_RAW_MATERIAL;
+=======
+  const mutation = rawMaterial._id ? UPDATE_RAW_MATERIAL : CREATE_RAW_MATERIAL;
+>>>>>>> ce806587a901f75774f4c60be851609cf30c1d79:src/views/Inventory/Modals.js
 
   const [saveRawMaterial] = useMutation(mutation);
   const submitModal = () => {
