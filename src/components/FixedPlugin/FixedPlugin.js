@@ -26,7 +26,7 @@ export default function FixedPlugin(props) {
   const handleClick = () => {
     props.handleFixedClick();
   };
-  const handleChange = name => event => {
+  const handleChange = (name) => (event) => {
     switch (name) {
       case "miniActive":
         props.sidebarMinimize();
@@ -46,8 +46,7 @@ export default function FixedPlugin(props) {
   const classesObj = useStyles();
   return (
     <div
-      className={"fixed-plugin" + (props.rtlActive ? " fixed-plugin-rtl" : "")}
-    >
+      className={"fixed-plugin" + (props.rtlActive ? " fixed-plugin-rtl" : "")}>
       <div id="fixedPluginClasses" className={props.fixedClasses}>
         <div onClick={handleClick}>
           <i className="fa fa-cog fa-2x" />
@@ -190,7 +189,7 @@ export default function FixedPlugin(props) {
                   switchBase: classesObj.switchBase,
                   checked: classesObj.switchChecked,
                   thumb: classesObj.switchIcon,
-                  track: classesObj.switchBar
+                  track: classesObj.switchBar,
                 }}
               />
               <div className="clearfix" />
@@ -207,7 +206,7 @@ export default function FixedPlugin(props) {
                   switchBase: classesObj.switchBase,
                   checked: classesObj.switchChecked,
                   thumb: classesObj.switchIcon,
-                  track: classesObj.switchBar
+                  track: classesObj.switchBar,
                 }}
               />
               <div className="clearfix" />
@@ -221,8 +220,7 @@ export default function FixedPlugin(props) {
                 setShowImage(true);
                 setBgImage(imagine1);
                 props.handleImageClick(imagine1);
-              }}
-            >
+              }}>
               <img src={imagine1} alt="..." />
             </a>
           </li>
@@ -233,8 +231,7 @@ export default function FixedPlugin(props) {
                 setShowImage(true);
                 setBgImage(imagine2);
                 props.handleImageClick(imagine2);
-              }}
-            >
+              }}>
               <img src={imagine2} alt="..." />
             </a>
           </li>
@@ -245,8 +242,7 @@ export default function FixedPlugin(props) {
                 setShowImage(true);
                 setBgImage(imagine3);
                 props.handleImageClick(imagine3);
-              }}
-            >
+              }}>
               <img src={imagine3} alt="..." />
             </a>
           </li>
@@ -257,38 +253,9 @@ export default function FixedPlugin(props) {
                 setShowImage(true);
                 setBgImage(imagine4);
                 props.handleImageClick(imagine4);
-              }}
-            >
+              }}>
               <img src={imagine4} alt="..." />
             </a>
-          </li>
-          <li className="button-container">
-            <div>
-              <Button
-                color="warning"
-                href="https://www.creative-tim.com/product/material-dashboard-pro-react?ref=mdpr-fixed-plugin"
-                target="_blank"
-                fullWidth
-              >
-                Buy now
-              </Button>
-            </div>
-          </li>
-          <li className="button-container">
-            <div>
-              <Button
-                color="info"
-                href="https://demos.creative-tim.com/material-dashboard-pro-react/#/documentation/tutorial?ref=mdpr-fixed-plugin"
-                target="_blank"
-                fullWidth
-              >
-                Documentation
-              </Button>
-            </div>
-          </li>
-          <li className="header-title" id="sharrreTitle">
-            Thank you for sharing!
-            <br />
           </li>
         </ul>
       </div>
@@ -309,11 +276,11 @@ FixedPlugin.propTypes = {
     "green",
     "blue",
     "purple",
-    "rose"
+    "rose",
   ]),
   handleBgColorClick: PropTypes.func,
   handleColorClick: PropTypes.func,
   handleImageClick: PropTypes.func,
   sidebarMinimize: PropTypes.func,
-  rtlActive: PropTypes.bool
+  rtlActive: PropTypes.bool,
 };
