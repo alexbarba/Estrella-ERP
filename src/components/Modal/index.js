@@ -12,6 +12,8 @@ import DialogActions from "@material-ui/core/DialogActions";
 import SweetAlert from "react-bootstrap-sweetalert";
 // @material-ui/icons
 import Close from "@material-ui/icons/Close";
+import Save from "@material-ui/icons/Save";
+import Cancel from "@material-ui/icons/Cancel";
 import Button from "components/CustomButtons/Button.js";
 
 const useModalStyles = makeStyles(modalStyles);
@@ -56,8 +58,12 @@ export const Modal = ({ props, children }) => {
       </DialogContent>
       <DialogActions
         className={classes.modalFooter + " " + classes.modalFooterCenter}>
-        <Button onClick={() => closeModal()}>Cancelar</Button>
+        <Button onClick={() => closeModal()}>
+          <Cancel />
+          Cancelar
+        </Button>
         <Button onClick={() => submit()} color="success">
+          <Save />
           Guardar
         </Button>
       </DialogActions>

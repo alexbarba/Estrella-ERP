@@ -54,7 +54,7 @@ const RawMaterialButtons = (rawMaterialModalActions) => {
   );
 };
 
-export const ListOfInventory = () => {
+export const ListOfRawMaterial = () => {
   const { loading, error, data } = useQuery(GET_RAW_MATERIALS);
   // Estado para mostrar el modal de cambiar cantidad de material
   const [showQuantityModal, setShowQuantityModal] = useState(false);
