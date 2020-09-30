@@ -18,6 +18,8 @@ import CardHeader from "components/Card/CardHeader.js";
 import CustomTabs from "components/CustomTabs/CustomTabs";
 
 import { RawMaterialTable } from "./RawMaterialTable";
+import { InventoryTables } from "./InventoryTables";
+import { GET_PROVIDERS, GET_UOMS } from "./hocs";
 import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 
 const styles = {
@@ -32,24 +34,6 @@ const useStyles = makeStyles(styles);
 
 export default function ReactTables() {
   const classes = useStyles();
-  const tabs = [
-    {
-      tabName: "Materia Prima",
-      tabIcon: Store,
-      tabContent: <RawMaterialTable />,
-    },
-    {
-      tabName: "Proveedores",
-      tabIcon: GroupWork,
-      tabContent: <></>,
-    },
-    {
-      tabName: "Unidades de Medida",
-      tabIcon: Assessment,
-      tabContent: <></>,
-    },
-  ];
-
   return (
     <GridContainer>
       <GridItem xs={12}>
@@ -68,3 +52,71 @@ export default function ReactTables() {
     </GridContainer>
   );
 }
+
+const providerColumns = [
+  {
+    Header: "Nombre",
+    accessor: "name",
+  },
+  {
+    Header: "Teléfono",
+    accessor: "phone",
+  },
+  {
+    Header: "Dirección",
+    accessor: "address",
+  },
+  {
+    Header: "Email",
+    accessor: "email",
+  },
+  {
+    Header: "Acciones",
+    accessor: "actions",
+  },
+];
+
+const uomColumns = [
+  {
+    Header: "Nombre",
+    accessor: "name",
+  },
+  {
+    Header: "Descripción",
+    accessor: "description",
+  },
+  {
+    Header: "Acciones",
+    accessor: "actions",
+  },
+];
+
+const tabs = [
+  {
+    tabName: "Materia Prima",
+    tabIcon: Store,
+    tabContent: <RawMaterialTable />,
+  },
+  {
+    tabName: "Proveedores",
+    tabIcon: GroupWork,
+    tabContent: (
+      <InventoryTables
+        props={{
+          query: GET_PROVIDERS,
+          columns: providerColumns,
+          name: "providers",
+        }}
+      />
+    ),
+  },
+  {
+    tabName: "Unidades de Medida",
+    tabIcon: Assessment,
+    tabContent: (
+      <InventoryTables
+        props={{ query: GET_UOMS, columns: uomColumns, name: "uoms" }}
+      />
+    ),
+  },
+];
