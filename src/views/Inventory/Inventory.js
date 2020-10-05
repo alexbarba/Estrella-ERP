@@ -1,9 +1,6 @@
 import React from "react";
 
-// @material-ui/core components
-import { makeStyles } from "@material-ui/core/styles";
 // @material-ui/icons
-import Assignment from "@material-ui/icons/Assignment";
 import Store from "@material-ui/icons/Store";
 import GroupWork from "@material-ui/icons/GroupWork";
 import Assessment from "@material-ui/icons/Assessment";
@@ -11,10 +8,6 @@ import Assessment from "@material-ui/icons/Assessment";
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
 
-import Card from "components/Card/Card.js";
-import CardBody from "components/Card/CardBody.js";
-import CardIcon from "components/Card/CardIcon.js";
-import CardHeader from "components/Card/CardHeader.js";
 import CustomTabs from "components/CustomTabs/CustomTabs";
 
 import { RawMaterialTable } from "./RawMaterialTable";
@@ -28,7 +21,6 @@ import {
   UPDATE_UOM,
 } from "./hocs";
 import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
-import { CardContent } from "@material-ui/core";
 
 const styles = {
   cardIconTitle: {
@@ -38,10 +30,7 @@ const styles = {
   },
 };
 
-const useStyles = makeStyles(styles);
-
 export default function ReactTables() {
-  const classes = useStyles();
   return (
     <GridContainer>
       <GridItem xs={12}>
