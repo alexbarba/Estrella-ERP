@@ -19,8 +19,16 @@ import CustomTabs from "components/CustomTabs/CustomTabs";
 
 import { RawMaterialTable } from "./RawMaterialTable";
 import { InventoryTables } from "./InventoryTables";
-import { GET_PROVIDERS, GET_UOMS } from "./hocs";
+import {
+  GET_PROVIDERS,
+  GET_UOMS,
+  CREATE_PROVIDER,
+  CREATE_UOM,
+  UPDATE_PROVIDER,
+  UPDATE_UOM,
+} from "./hocs";
 import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
+import { CardContent } from "@material-ui/core";
 
 const styles = {
   cardIconTitle: {
@@ -37,17 +45,7 @@ export default function ReactTables() {
   return (
     <GridContainer>
       <GridItem xs={12}>
-        <Card>
-          <CardHeader color="primary" icon>
-            <CardIcon color="primary">
-              <Assignment />
-            </CardIcon>
-            <h4 className={classes.cardIconTitle}>Materias Primas</h4>
-          </CardHeader>
-          <CardBody>
-            <CustomTabs headerColor="primary" tabs={tabs} />
-          </CardBody>
-        </Card>
+        <CustomTabs headerColor="primary" tabs={tabs} />
       </GridItem>
     </GridContainer>
   );
@@ -105,7 +103,11 @@ const tabs = [
         props={{
           query: GET_PROVIDERS,
           columns: providerColumns,
-          name: "providers",
+          collectionName: "providers",
+          updateMutation: UPDATE_PROVIDER,
+          createMutation: CREATE_PROVIDER,
+          Icon: GroupWork,
+          modalTitle: "Proveedor",
         }}
       />
     ),
@@ -115,7 +117,15 @@ const tabs = [
     tabIcon: Assessment,
     tabContent: (
       <InventoryTables
-        props={{ query: GET_UOMS, columns: uomColumns, name: "uoms" }}
+        props={{
+          query: GET_UOMS,
+          columns: uomColumns,
+          collectionName: "uoms",
+          updateMutation: UPDATE_UOM,
+          createMutation: CREATE_UOM,
+          Icon: Assessment,
+          modalTitle: "Unidad de Medida",
+        }}
       />
     ),
   },

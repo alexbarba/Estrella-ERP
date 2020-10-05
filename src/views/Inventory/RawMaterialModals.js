@@ -12,7 +12,7 @@ import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardIcon from "components/Card/CardIcon.js";
 import CardBody from "components/Card/CardBody.js";
-import { Modal, SweetSuccess } from "components/Modal";
+import { Modal } from "components/Modal";
 import { CustomSelect } from "components/CustomSelect";
 
 import EventNoteIcon from "@material-ui/icons/EventNote";
@@ -59,7 +59,6 @@ export const ChangeQuantityModal = ({ props }) => {
   const { modal, setModal, input, rawMaterial } = props;
   const [quantity, setQuantity] = useState(1);
   const [updateRawMaterial] = useMutation(UPDATE_RAW_MATERIAL);
-  const [successAlert, setSuccessAlert] = useState(false);
 
   const title = input
     ? `Metiendo ${rawMaterial?.name}`
@@ -102,15 +101,6 @@ export const ChangeQuantityModal = ({ props }) => {
 
   return (
     <div>
-      {successAlert && (
-        <SweetSuccess
-          props={{
-            modal: successAlert,
-            setModal: (v) => setSuccessAlert(v),
-            msg: successMessage,
-          }}
-        />
-      )}
       <Modal
         props={{
           title: title,

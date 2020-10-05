@@ -7,7 +7,7 @@ import { useQuery } from "@apollo/client";
 
 import ReactTable from "components/ReactTable/ReactTable.js";
 import { SweetSuccess } from "components/Modal";
-//import { PropModal } from "./PropModal";
+import { EditModal } from "./EditModal";
 import { SpinnerLinear } from "components/SpinnerLinear";
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
@@ -29,47 +29,46 @@ const EditButton = (action) => {
 };
 
 export const InventoryTables = ({ props }) => {
-  const { query, columns, name } = props;
+  const { query, columns, collectionName, createMutation, updateMutation, Icon, modalTitle } = props;
   const { loading, error, data } = useQuery(query);
-  // Estado para mostrar el modal donde se editan las propiedades de algun proveedor
-  const [showPropModal, setShowPropModal] = useState(false);
-  // Estado para saber que materia prima ha sido seleccionada para ser modificada
-  const [activeProp, setActiveProp] = useState();
+  // Estado para mostrar el modal donde se editan las propiedades de algun objeto
+  const [showObjModal, setShowObjModal] = useState(false);
+  // Estado para saber que objeto ha sido seleccionado para ser modificado
+  const [activeObj, setActiveObj] = useState();
   // Estado para mostrar el modal de operacion exitosa
   const [successModal, setSuccessModal] = useState();
 
-  const propEdit = (prop) => {
-    setActiveProp(prop);
-    setShowPropModal(true);
+  const actionEdit = (obj) => {
+    setActiveObj(obj);
+    setShowObjModal(true);
   };
 
   const setModal = (submitMsg) => {
-    setShowPropModal(false);
-    setActiveProp(undefined);
+    setShowObjModal(false);
+    setActiveObj(undefined);
     setSuccessModal(submitMsg);
   };
 
   if (loading) return <SpinnerLinear />;
   if (error) return <p>Error :(</p>;
-  const content = data.[name].map((prop) => {
-    return {
-      _id: prop._id,
-      name: prop.name,
-      phone: prop.phone,
-      email: prop.email,
-      address: prop.address,
-      actions: EditButton(() => propEdit(prop)),
-    };
-  });
+  const content = data.[collectionName].map((obj) => {
+    return {...columns.reduce((result, key) => {result[key.accessor] = obj.[key.accessor]
+    return result}, {}), actions: EditButton(() => actionEdit(obj))}
+    }     
+  );
 
   return (
     <>
-      {showPropModal && (
-        <div
-          props={{
-            modal: showPropModal,
+      {showObjModal && (
+        <EditModal
+        props={{
+            modal: showObjModal,
             setModal: (submitMsg) => setModal(submitMsg),
-            prop: activeProp,
+            obj: activeObj,
+            columns: columns.slice(0,-1) , 
+            mutation: activeObj? updateMutation: createMutation, 
+            Icon: Icon,
+            title: modalTitle,
           }}
         />
       )}
@@ -88,7 +87,7 @@ export const InventoryTables = ({ props }) => {
         alignItems="flex-start"
         style={{ marginTop: 10, marginRight: 10, marginBottom: 10 }}>
         <GridItem>
-          <Button round color="primary" onClick={() => setShowPropModal(true)}>
+          <Button round color="primary" onClick={() => setShowObjModal(true)}>
             <AddIcon />
             Crear nuevo
           </Button>
